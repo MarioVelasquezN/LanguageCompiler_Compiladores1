@@ -43,9 +43,6 @@ namespace LanguagueCompiler.Lexer
                 {"break",TokenType.BreakKeword },
                 {"import",TokenType.ImportKeword },
                 {"log",TokenType.LogKeword },
-
-
-
             };
         }
 
@@ -449,14 +446,16 @@ namespace LanguagueCompiler.Lexer
                         case '=':
                             lexeme.Append(currentChar);
                             currentChar = PeekNextChar();
-                            if (currentChar != '=')
+                            if (currentChar == '=')
                             {
-                                return lexeme.ToToken(input, TokenType.Equal);
+                                return lexeme.ToToken(input, TokenType.Equality);
+                            }else if(currentChar == '>')
+                            {
+                                return lexeme.ToToken(input, TokenType.FuncAssig);
                             }
-
                             currentChar = GetNextChar();
                             lexeme.Append(currentChar);
-                            return lexeme.ToToken(input, TokenType.Equality);
+                            return lexeme.ToToken(input, TokenType.Equal);
                         case '.':
                             lexeme.Append(currentChar);
                             return new Token

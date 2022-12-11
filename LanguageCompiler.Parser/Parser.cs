@@ -21,7 +21,11 @@ namespace LanguageCompiler.Parser
 
         private void Program()
         {
-            Element();
+            if (this.lookAhead.TokenType == TokenType.ConstKeword || this.lookAhead.TokenType == TokenType.VarKeword || this.lookAhead.TokenType == TokenType.LetKeword)
+            {
+                Element();
+                Program();
+            }
         }
 
         private void Element()
@@ -149,7 +153,7 @@ namespace LanguageCompiler.Parser
         private void LogicalOrExpresion()
         {
             LogicalAndExpression();
-            while(this.lookAhead.TokenType == TokenType.Or)
+            while (this.lookAhead.TokenType == TokenType.Or)
             {
                 var token = this.lookAhead;
                 Move();
@@ -182,7 +186,7 @@ namespace LanguageCompiler.Parser
         private void RelExpression()
         {
             Expression();
-            while (this.lookAhead.TokenType == TokenType.LessThan || this.lookAhead.TokenType == TokenType.LessOrEqualThan || 
+            while (this.lookAhead.TokenType == TokenType.LessThan || this.lookAhead.TokenType == TokenType.LessOrEqualThan ||
                 this.lookAhead.TokenType == TokenType.GreaterThan || this.lookAhead.TokenType == TokenType.GreaterOrEqualThan)
             {
                 var token = this.lookAhead;
@@ -250,7 +254,7 @@ namespace LanguageCompiler.Parser
 
         private void ElseStatement()
         {
-            if(this.lookAhead.TokenType == TokenType.ElseKeword)
+            if (this.lookAhead.TokenType == TokenType.ElseKeword)
             {
                 Statement();
             }
@@ -261,7 +265,8 @@ namespace LanguageCompiler.Parser
             if (this.lookAhead.TokenType == TokenType.VarKeword)
             {
                 Match(TokenType.VarKeword);
-            }else if (this.lookAhead.TokenType == TokenType.LetKeword)
+            }
+            else if (this.lookAhead.TokenType == TokenType.LetKeword)
             {
                 Match(TokenType.LetKeword);
             }
@@ -280,7 +285,8 @@ namespace LanguageCompiler.Parser
                 Match(TokenType.Identifier);
                 Identifier();
                 Assignation();
-            }else if (this.lookAhead.TokenType == TokenType.OpenList)
+            }
+            else if (this.lookAhead.TokenType == TokenType.OpenList)
             {
                 Match(TokenType.OpenList);
                 Identifier();
@@ -291,7 +297,7 @@ namespace LanguageCompiler.Parser
 
         private void AssignationPrime()
         {
-            if(this.lookAhead.TokenType == TokenType.Comma)
+            if (this.lookAhead.TokenType == TokenType.Comma)
             {
                 Identifier();
                 AssignationPrime();
@@ -338,7 +344,8 @@ namespace LanguageCompiler.Parser
                 Identifier();
                 Match(TokenType.Colon);
                 VarType();
-            }else if (this.lookAhead.TokenType == TokenType.Comma)
+            }
+            else if (this.lookAhead.TokenType == TokenType.Comma)
             {
                 Match(TokenType.Comma);
                 FunctionParams();

@@ -47,12 +47,16 @@ namespace LanguagueCompiler.Lexer
         RightParens,
         SemiColon,
         Colon,
+        CharConst,
         Assignation,
         StringConstant,
         OpenBrace,
         CloseBrace,
+        OpenArray,
+        CloseArray,
         Comma,
         LogicalAnd,
+        LogicalOr,
         DateConstant,
         Increment,
         Decrement,
@@ -83,6 +87,7 @@ namespace LanguagueCompiler.Lexer
         Exponentiation,
         RemainderAssigment,
         BitwiseXORAssignment,
-        LogKeword
+        LogKeword,
+        FuncAssig
     }
 }

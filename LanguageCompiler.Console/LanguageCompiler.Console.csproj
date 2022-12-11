@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\LanguageCompiler.Parser\LanguageCompiler.Parser.csproj" />
     <ProjectReference Include="..\LanguagueCompiler.Lexer\LanguagueCompiler.Lexer.csproj" />
   </ItemGroup>
 

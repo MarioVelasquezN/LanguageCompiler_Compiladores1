@@ -123,7 +123,7 @@ namespace LanguageCompiler.Parser
             Match(TokenType.LeftParens);
             Variables();
             Match(TokenType.InKeword);
-            // aqui viene identifier
+            Identifier();
             Match(TokenType.RightParens);
             CompoundStatement();
         }

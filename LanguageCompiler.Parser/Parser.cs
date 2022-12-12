@@ -280,9 +280,8 @@ namespace LanguageCompiler.Parser
 
         private void Assignation()
         {
-            if (this.lookAhead.TokenType == TokenType.Identifier)
+            if (this.lookAhead.TokenType == TokenType.Identifier || this.lookAhead.TokenType == TokenType.IntConstant)
             {
-                Match(TokenType.Identifier);
                 Identifier();
                 Assignation();
             }
@@ -299,6 +298,7 @@ namespace LanguageCompiler.Parser
         {
             if (this.lookAhead.TokenType == TokenType.Comma)
             {
+                Match(TokenType.Comma);
                 Identifier();
                 AssignationPrime();
             }

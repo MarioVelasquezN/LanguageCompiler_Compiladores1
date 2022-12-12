@@ -8,7 +8,6 @@ namespace LanguageCompiler.Parser
     public class Parser
     {
         private readonly IScanner scanner;
-        private Scanner scannerObj;
         private Token lookAhead;
         public Parser(IScanner scanner)
         {

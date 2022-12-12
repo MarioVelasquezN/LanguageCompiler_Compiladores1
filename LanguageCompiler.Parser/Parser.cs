@@ -1,5 +1,6 @@
 ﻿using LanguagueCompiler.Lexer;
 using Microsoft.VisualBasic;
+using System.Text.RegularExpressions;
 
 namespace LanguageCompiler.Parser
 {
@@ -22,8 +23,9 @@ namespace LanguageCompiler.Parser
 
         private void Program()
         {
+            //Console.WriteLine("Program encuentra" + this.lookAhead.TokenType.ToString());
             //if (this.lookAhead.TokenType == TokenType.ConstKeword || this.lookAhead.TokenType == TokenType.VarKeword || this.lookAhead.TokenType == TokenType.LetKeword)
-            if (Enum.IsDefined(typeof(TokenType), this.lookAhead.TokenType.ToString()) == true && this.lookAhead.TokenType != TokenType.EOF)
+            if (Enum.IsDefined(typeof(TokenType), this.lookAhead.TokenType.ToString() ) == true && this.lookAhead.TokenType != TokenType.EOF)
             {
                 Element();
                 Program();
@@ -37,6 +39,7 @@ namespace LanguageCompiler.Parser
 
         private void CompoundStatement()
         {
+            //Console.WriteLine("Compound encuentra" + this.lookAhead.TokenType.ToString());
             Match(TokenType.OpenBrace);
             Statements();
             Match(TokenType.CloseBrace);
@@ -44,7 +47,11 @@ namespace LanguageCompiler.Parser
 
         private void Statements()
         {
-            if (this.lookAhead.TokenType == TokenType.ConstKeword || this.lookAhead.TokenType == TokenType.VarKeword || this.lookAhead.TokenType == TokenType.LetKeword)
+            //Console.WriteLine("Statements encuentra" + this.lookAhead.TokenType.ToString());
+            if (this.lookAhead.TokenType == TokenType.VarKeword || this.lookAhead.TokenType == TokenType.LetKeword || this.lookAhead.TokenType == TokenType.ConstKeword
+                || this.lookAhead.TokenType == TokenType.IfKeword || this.lookAhead.TokenType == TokenType.WhileKeword || this.lookAhead.TokenType == TokenType.ConsoleKeword
+                || this.lookAhead.TokenType == TokenType.ForKeword || this.lookAhead.TokenType == TokenType.ForeachKeword || this.lookAhead.TokenType == TokenType.ReturnKeword
+                || this.lookAhead.TokenType == TokenType.ContinueKeword || this.lookAhead.TokenType == TokenType.BreakKeword)
             {
                 Statement();
                 Statements();
@@ -53,7 +60,7 @@ namespace LanguageCompiler.Parser
 
         public void Statement()
         {
-            Console.WriteLine(this.lookAhead.TokenType.ToString());
+            //Console.WriteLine("Statement encuentra" + this.lookAhead.TokenType.ToString());
             switch (this.lookAhead.TokenType)
             {
                 case TokenType.VarKeword:
@@ -114,7 +121,7 @@ namespace LanguageCompiler.Parser
 
         private void ReturnExpressionOpt()
         {
-            if (this.lookAhead.TokenType == TokenType.Identifier)
+            if (this.lookAhead.TokenType == TokenType.Identifier || this.lookAhead.TokenType == TokenType.IntConstant)
             {
                 LogicalOrExpresion();
             }
@@ -124,21 +131,22 @@ namespace LanguageCompiler.Parser
         {
             Match(TokenType.ForeachKeword);
             Match(TokenType.LeftParens);
-            Variables();
+            Match(TokenType.VarKeword);
+            Identifier();
             Match(TokenType.InKeword);
             Identifier();
             Match(TokenType.RightParens);
             CompoundStatement();
         }
-
+        
         private void ForStatement()
         {
             Match(TokenType.ForKeword);
             Match(TokenType.LeftParens);
             Variables();
-            Expression();
+            LogicalOrExpresion();
             Match(TokenType.SemiColon);
-            Expression();
+            LogicalOrExpresion();
             Match(TokenType.RightParens);
             CompoundStatement();
         }
@@ -259,7 +267,8 @@ namespace LanguageCompiler.Parser
         {
             if (this.lookAhead.TokenType == TokenType.ElseKeword)
             {
-                Statement();
+                Match(TokenType.ElseKeword);
+                CompoundStatement();
             }
         }
 
@@ -276,8 +285,11 @@ namespace LanguageCompiler.Parser
             Identifier();
             Match(TokenType.Colon);
             VarType();
-            Match(TokenType.Equal);
-            Assignation();
+            if (this.lookAhead.TokenType == TokenType.Equal)
+            {
+                Match(TokenType.Equal);
+                Assignation();
+            }
             Match(TokenType.SemiColon);
         }
 
@@ -336,7 +348,6 @@ namespace LanguageCompiler.Parser
             Match(TokenType.RightParens);
             Match(TokenType.Colon);
             VarType();
-            Match(TokenType.FuncAssig);
             CompoundStatement();
         }
 
@@ -362,6 +373,7 @@ namespace LanguageCompiler.Parser
 
         private void Match(TokenType tokenType)
         {
+            Console.WriteLine("Match encuentra" + this.lookAhead.TokenType.ToString());
             if (this.lookAhead.TokenType != tokenType)
             {
                 throw new ApplicationException($"Syntax error! Expected {tokenType} but found {this.lookAhead.TokenType}, Line: {this.lookAhead.Line}, Column: {this.lookAhead.Column}.");

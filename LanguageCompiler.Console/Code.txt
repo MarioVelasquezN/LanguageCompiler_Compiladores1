@@ -1,9 +1,4 @@
 ﻿var a : number = 1 ;
 
-if ( a < c || b > d ) {
-	var a : number = 1 ;
-	whule( a > e ){
-		var a : number = 1 ;
-	}
+foreach (var a in num ) {
 }
-

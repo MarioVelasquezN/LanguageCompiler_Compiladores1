@@ -23,6 +23,7 @@ namespace LanguageCompiler.Core
         public static ExpressionType Float => new ExpressionType("float", LanguagueCompiler.Lexer.TokenType.FloatKeword);
         public static ExpressionType String => new ExpressionType("string", LanguagueCompiler.Lexer.TokenType.StringKeword);
         public static ExpressionType Bool => new ExpressionType("bool", LanguagueCompiler.Lexer.TokenType.BoolKeword);
+        public static ExpressionType Void => new ExpressionType("void", LanguagueCompiler.Lexer.TokenType.VoidKeword);
         public bool Equals(ExpressionType? other)
         {
             if (ReferenceEquals(null, other))

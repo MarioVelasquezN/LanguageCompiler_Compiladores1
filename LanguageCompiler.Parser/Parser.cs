@@ -37,8 +37,9 @@ namespace LanguageCompiler.Parser
         private Statement CompoundStatement(IdExpression id)
         {
             Match(TokenType.OpenBrace);
-            Statements(id);
+            var stmt = Statements(id);
             Match(TokenType.CloseBrace);
+            return new CompoundStatement(stmt);
         }
 
         private Statement Statements(IdExpression id)
@@ -119,7 +120,7 @@ namespace LanguageCompiler.Parser
             return null;
         }
 
-        private void ForeachStatement()
+        private Statement ForeachStatement()
         {
             Match(TokenType.ForeachKeword);
             Match(TokenType.LeftParens);
@@ -127,7 +128,8 @@ namespace LanguageCompiler.Parser
             Match(TokenType.InKeword);
             var id = Identifier();
             Match(TokenType.RightParens);
-            var statement = CompoundStatement();
+            var stmt = CompoundStatement(null);
+            return new ForEachStatement(vars, id, stmt);
         }
 
         private Statement ForStatement()
@@ -139,7 +141,7 @@ namespace LanguageCompiler.Parser
             Match(TokenType.SemiColon);
             var expr2 = Express();
             Match(TokenType.RightParens);
-            var statement = CompoundStatement();
+            var statement = CompoundStatement(null);
             return new ForStatement(vars, expr1, expr2, statement);
         }
 
@@ -264,7 +266,7 @@ namespace LanguageCompiler.Parser
                     Match(TokenType.LeftBracket);
                     var index = LogicalOrExpress();
                     Match(TokenType.RightBracket);
-                    return new ArrayAccessExpression(((ArrayType)id.GetType()).Of, id, index)
+                    return new ArrayAccessExpression(((ArrayType)id.GetType()).Of, id, index);
             }
 
             return null;
@@ -334,23 +336,25 @@ namespace LanguageCompiler.Parser
             }
         }
 
-        private void VarType()
+        private ExpressionType VarType()
         {
             switch (this.lookAhead.TokenType)
             {
                 case TokenType.IntKeword:
                     Match(TokenType.IntKeword);
-                    break;
+                    return ExpressionType.Int;
                 case TokenType.BoolKeword:
                     Match(TokenType.BoolKeword);
-                    break;
+                    return ExpressionType.Bool;
                 case TokenType.StringKeword:
                     Match(TokenType.StringKeword);
-                    break;
+                    return ExpressionType.String;
                 case TokenType.VoidKeword:
                     Match(TokenType.VoidKeword);
-                    break;
+                    return ExpressionType.Void;
             }
+
+            return null;
         }
 
         public void Function()

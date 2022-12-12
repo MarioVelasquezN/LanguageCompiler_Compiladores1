@@ -26,7 +26,6 @@ namespace LanguageCompiler.Parser
                 Element();
                 Program();
             }
-        }
 
         private void Element()
         {

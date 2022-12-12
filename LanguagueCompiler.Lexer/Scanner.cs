@@ -46,6 +46,11 @@ namespace LanguagueCompiler.Lexer
             };
         }
 
+        public Dictionary<string, TokenType> getKeywords()
+        {
+            return this.keywords;
+        }
+
         public Token GetNextToken()
         {
             var lexeme = new StringBuilder();

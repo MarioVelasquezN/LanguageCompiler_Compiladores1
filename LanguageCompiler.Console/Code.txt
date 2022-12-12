@@ -1,2 +1,9 @@
-﻿
-var a : number = [ 1 , 2 ] ;
+﻿var a : number = 1 ;
+
+if ( a < c || b > d ) {
+	var a : number = 1 ;
+	whule( a > e ){
+		var a : number = 1 ;
+	}
+}
+

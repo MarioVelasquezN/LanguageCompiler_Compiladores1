@@ -7,6 +7,7 @@ namespace LanguageCompiler.Parser
     public class Parser
     {
         private readonly IScanner scanner;
+        private Scanner scannerObj;
         private Token lookAhead;
         public Parser(IScanner scanner)
         {
@@ -21,11 +22,13 @@ namespace LanguageCompiler.Parser
 
         private void Program()
         {
-            if (this.lookAhead.TokenType == TokenType.ConstKeword || this.lookAhead.TokenType == TokenType.VarKeword || this.lookAhead.TokenType == TokenType.LetKeword)
+            //if (this.lookAhead.TokenType == TokenType.ConstKeword || this.lookAhead.TokenType == TokenType.VarKeword || this.lookAhead.TokenType == TokenType.LetKeword)
+            if (Enum.IsDefined(typeof(TokenType), this.lookAhead.TokenType.ToString()) == true && this.lookAhead.TokenType != TokenType.EOF)
             {
                 Element();
                 Program();
             }
+        }
 
         private void Element()
         {
@@ -50,6 +53,7 @@ namespace LanguageCompiler.Parser
 
         public void Statement()
         {
+            Console.WriteLine(this.lookAhead.TokenType.ToString());
             switch (this.lookAhead.TokenType)
             {
                 case TokenType.VarKeword:
@@ -198,7 +202,7 @@ namespace LanguageCompiler.Parser
         {
             Match(TokenType.WhileKeword);
             Match(TokenType.LeftParens);
-            Expression();
+            LogicalOrExpresion();
             Match(TokenType.RightParens);
             CompoundStatement();
         }

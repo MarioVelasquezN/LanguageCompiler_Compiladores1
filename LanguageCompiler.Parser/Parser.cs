@@ -65,10 +65,8 @@ namespace LanguageCompiler.Parser
                     break;
                 case TokenType.IfKeword:
                     return IfStatement();
-                    break;
                 case TokenType.WhileKeword:
                     return WhileStatement();
-                    break;
                 case TokenType.ConsoleKeword:
                     return PrintStatement();
                     break;
@@ -91,16 +89,18 @@ namespace LanguageCompiler.Parser
             }
         }
 
-        private void BreakStatement()
+        private Statement BreakStatement()
         {
             Match(TokenType.BreakKeword);
             Match(TokenType.SemiColon);
+            return new BreakStatement();
         }
 
-        private void ContinueStatement()
+        private Statement ContinueStatement()
         {
             Match(TokenType.ContinueKeword);
             Match(TokenType.SemiColon);
+            return new ContinueStatement();
         }
 
         private void ReturnStatement()
@@ -122,11 +122,11 @@ namespace LanguageCompiler.Parser
         {
             Match(TokenType.ForeachKeword);
             Match(TokenType.LeftParens);
-            Variables();
+            var vars = Variables();
             Match(TokenType.InKeword);
-            Identifier();
+            var id = Identifier();
             Match(TokenType.RightParens);
-            CompoundStatement();
+            var statement = CompoundStatement();
         }
 
         private Statement ForStatement()
@@ -290,7 +290,7 @@ namespace LanguageCompiler.Parser
             Match(TokenType.SemiColon);
         }
 
-        private void Assignation()
+        private Statement Assignation(IdExpression id)
         {
             if (this.lookAhead.TokenType == TokenType.Identifier || this.lookAhead.TokenType == TokenType.IntConstant)
             {

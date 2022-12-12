@@ -29,29 +29,28 @@ namespace LanguageCompiler.Parser
             }
         }
 
-        private void Element()
+        private Statement Element(IdExpression id)
         {
-            Statement();
+            return Statement(id);
         }
 
-        private Statement CompoundStatement()
+        private Statement CompoundStatement(IdExpression id)
         {
             Match(TokenType.OpenBrace);
-            Statements();
+            Statements(id);
             Match(TokenType.CloseBrace);
         }
 
-        private Statement Statements()
+        private Statement Statements(IdExpression id)
         {
             if (this.lookAhead.TokenType == TokenType.ConstKeword || this.lookAhead.TokenType == TokenType.VarKeword || this.lookAhead.TokenType == TokenType.LetKeword)
             {
-                Statement();
-                Statements();
-                
+                return new SequenceStatement(Statement(id), Statements(id));
             }
+            return null;
         }
 
-        public Statement Statement()
+        public Statement Statement(IdExpression id)
         {
             switch (this.lookAhead.TokenType)
             {
@@ -103,19 +102,21 @@ namespace LanguageCompiler.Parser
             return new ContinueStatement();
         }
 
-        private void ReturnStatement()
+        private Statement ReturnStatement()
         {
             Match(TokenType.ReturnKeword);
-            ReturnExpressionOpt();
+            var expr = ReturnExpressionOpt();
             Match(TokenType.SemiColon);
+            return new ReturnStatement(expr);
         }
 
-        private void ReturnExpressionOpt()
+        private Expression ReturnExpressionOpt()
         {
             if (this.lookAhead.TokenType == TokenType.Identifier)
             {
-                LogicalOrExpress();
+                return LogicalOrExpress();
             }
+            return null;
         }
 
         private void ForeachStatement()
@@ -216,40 +217,57 @@ namespace LanguageCompiler.Parser
 
         private Expression Express()
         {
-            Term();
+            var expr = Term();
+            var token = this.lookAhead;
             while (this.lookAhead.TokenType == TokenType.Plus || this.lookAhead.TokenType == TokenType.Minus)
             {
-                var token = this.lookAhead;
                 Move();
                 Term();
+                expr = new ArithmeticExpression(expr, Term(), token);
             }
+            return expr;
         }
 
-        private void Term()
+        private Expression Term()
         {
-            Identifier();
+            var expr = Identifier();
+            var token = this.lookAhead;
             while (this.lookAhead.TokenType == TokenType.Asterisk || this.lookAhead.TokenType == TokenType.Division)
             {
-                var token = this.lookAhead;
                 Move();
                 Identifier();
+                expr = new ArithmeticExpression(expr, Identifier(), token);
             }
+            return expr;
         }
 
-        private void Identifier()
+        private Expression Identifier()
         {
             switch (this.lookAhead.TokenType)
             {
                 case TokenType.IntConstant:
                     Match(TokenType.IntConstant);
-                    break;
+                    var token = this.lookAhead;
+                    return new ConstantExpression(ExpressionType.Int, token);
                 case TokenType.FloatConstant:
                     Match(TokenType.FloatConstant);
-                    break;
+                    token = this.lookAhead;
+                    return new ConstantExpression(ExpressionType.Float, token);
                 default:
+                    token = this.lookAhead;
                     Match(TokenType.Identifier);
-                    break;
+                    var id = ContextManager.Get(token.Lexeme).Id;
+                    if (id.Type is not ArrayType)
+                    {
+                        return id;
+                    }
+                    Match(TokenType.LeftBracket);
+                    var index = LogicalOrExpress();
+                    Match(TokenType.RightBracket);
+                    return new ArrayAccessExpression(((ArrayType)id.GetType()).Of, id, index)
             }
+
+            return null;
         }
 
         private Statement IfStatement()

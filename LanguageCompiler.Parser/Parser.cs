@@ -211,7 +211,7 @@ namespace LanguageCompiler.Parser
             Match(TokenType.LeftParens);
             var expr = Express();
             Match(TokenType.RightParens);
-            var statement = CompoundStatement();
+            var statement = CompoundStatement(null);
             return new WhileStatement(expr, statement);
         }
 
@@ -276,7 +276,7 @@ namespace LanguageCompiler.Parser
             Match(TokenType.LeftParens);
             var expr = LogicalOrExpress();
             Match(TokenType.RightParens);
-            var compoundStatement = CompoundStatement();
+            var compoundStatement = CompoundStatement(null);
             var elseStatement= ElseStatement();
             return new IfStatement(expr, compoundStatement, elseStatement);
         }
@@ -285,7 +285,7 @@ namespace LanguageCompiler.Parser
         {
             if (this.lookAhead.TokenType == TokenType.ElseKeword)
             {
-                return Statement();
+                return Statement(null);
             }
             return null;
         }

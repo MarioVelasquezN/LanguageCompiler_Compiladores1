@@ -83,6 +83,7 @@ namespace LanguagueCompiler.Lexer
         Exponentiation,
         RemainderAssigment,
         BitwiseXORAssignment,
-        LogKeword
+        LogKeword,
+        FuncAssig
     }
 }

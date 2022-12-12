@@ -1,11 +1,6 @@
-<<<<<<< Updated upstream
-﻿using LanguagueCompiler.Lexer;
-=======
-﻿using LanguageCompiler.Core;
+using LanguageCompiler.Core;
 using LanguagueCompiler.Lexer;
-
 using Microsoft.VisualBasic;
->>>>>>> Stashed changes
 
 namespace LanguageCompiler.Parser
 {
@@ -20,30 +15,6 @@ namespace LanguageCompiler.Parser
             this.Move();
         }
 
-<<<<<<< Updated upstream
-        private void Code()
-        {
-            Block();
-        }
-
-        private void Block()
-        {
-            Decls();
-            Stmts();
-        }
-
-        private void Decls()
-        {
-            if (this.lookAhead.TokenType == TokenType.VarKeword || this.lookAhead.TokenType == TokenType.LetKeword || this.lookAhead.TokenType == TokenType.ConstKeword)
-            {
-                Decl();
-                Decls();
-            }
-            
-        }
-
-        private void Decl()
-=======
         public Statement Parse()
         {
             return Program();
@@ -58,57 +29,34 @@ namespace LanguageCompiler.Parser
             }
         }
 
-        private Statement Element()
+        private void Element()
         {
-            return Statement();
+            Statement();
         }
 
         private Statement CompoundStatement()
         {
             Match(TokenType.OpenBrace);
-            var statement = Statements();
+            Statements();
             Match(TokenType.CloseBrace);
-            return statement;
         }
 
         private Statement Statements()
         {
             if (this.lookAhead.TokenType == TokenType.ConstKeword || this.lookAhead.TokenType == TokenType.VarKeword || this.lookAhead.TokenType == TokenType.LetKeword)
             {
-                return new SequenceStatement(Statement(), Statements());
+                Statement();
+                Statements();
+                
             }
-            return null;
         }
 
         public Statement Statement()
->>>>>>> Stashed changes
         {
-           switch(this.lookAhead.TokenType)
+            switch (this.lookAhead.TokenType)
             {
                 case TokenType.VarKeword:
-<<<<<<< Updated upstream
-                    VariableDecl();
-                    Match(TokenType.Identifier);
-                    Match(TokenType.Colon);
-                    _Type();
-                    Match(TokenType.SemiColon);
-                    break;
-                case TokenType.LetKeword:
-                    VariableDecl();
-                    Match(TokenType.Identifier);
-                    Match(TokenType.Colon);
-                    _Type();
-                    Match(TokenType.SemiColon);
-                    break;
-                case TokenType.ConstKeword:
-                    VariableDecl();
-                    Match(TokenType.Identifier);
-                    Match(TokenType.Colon);
-                    _Type();
-                    Match(TokenType.SemiColon);
-=======
                     return Variables();
-                    break;
                 case TokenType.LetKeword:
                     return Variables();
                     break;
@@ -139,19 +87,14 @@ namespace LanguageCompiler.Parser
                     break;
                 case TokenType.BreakKeword:
                     return BreakStatement();
->>>>>>> Stashed changes
                     break;
             }
         }
 
-<<<<<<< Updated upstream
-        private void _Type()
-=======
-        private Statement BreakStatement()
+        private void BreakStatement()
         {
             Match(TokenType.BreakKeword);
             Match(TokenType.SemiColon);
-            return new BreakStatement();
         }
 
         private void ContinueStatement()
@@ -186,16 +129,17 @@ namespace LanguageCompiler.Parser
             CompoundStatement();
         }
 
-        private void ForStatement()
+        private Statement ForStatement()
         {
             Match(TokenType.ForKeword);
             Match(TokenType.LeftParens);
-            Variables();
-            Expression();
+            var vars = Variables();
+            var expr1 = Express();
             Match(TokenType.SemiColon);
-            Expression();
+            var expr2 = Express();
             Match(TokenType.RightParens);
-            CompoundStatement();
+            var statement = CompoundStatement();
+            return new ForStatement(vars, expr1, expr2, statement);
         }
 
         private void PrintStatement()
@@ -204,8 +148,9 @@ namespace LanguageCompiler.Parser
             Match(TokenType.Decimal);
             Match(TokenType.LogKeword);
             Match(TokenType.LeftParens);
-            LogicalOrExpress();
+            var @params = FunctionParams();
             Match(TokenType.RightParens);
+            return new PrintStatement(@params)
         }
 
         private Expression LogicalOrExpress()
@@ -215,57 +160,61 @@ namespace LanguageCompiler.Parser
             {
                 var token = this.lookAhead;
                 Move();
-                expr = new LogicalOrExpression(expr,LogicalAndExpress());
+                expr = new LogicalOrExpression(expr, LogicalAndExpress());
             }
             return expr;
         }
 
         private Expression LogicalAndExpress()
         {
-            var expr = EqExpression();
+            var expr = EqExpress();
             while (this.lookAhead.TokenType == TokenType.LogicalAnd)
             {
                 var token = this.lookAhead;
                 Move();
-                expr = new LogicalAndExpression(expr,EqExpression());
+                expr = new LogicalAndExpression(expr, EqExpress());
             }
             return expr;
         }
 
-        private Expression EqExpression()
+        private Expression EqExpress()
         {
-            RelExpression();
+            var expr = RelExpress();
             while (this.lookAhead.TokenType == TokenType.Equal || this.lookAhead.TokenType == TokenType.NotEqual)
             {
                 var token = this.lookAhead;
                 Move();
-                RelExpression();
+                expr = new EqualExpression(expr, RelExpress(), token);
             }
+
+            return expr;
         }
 
-        private void RelExpression()
+        private Expression RelExpress()
         {
-            Expression();
+            var expr = Express();
             while (this.lookAhead.TokenType == TokenType.LessThan || this.lookAhead.TokenType == TokenType.LessOrEqualThan ||
                 this.lookAhead.TokenType == TokenType.GreaterThan || this.lookAhead.TokenType == TokenType.GreaterOrEqualThan)
             {
                 var token = this.lookAhead;
                 Move();
-                Expression();
+                Express();
+                expr = new RelationalExpression(expr, Express(), token);
             }
+            return expr;
         }
 
         private Statement WhileStatement()
         {
             Match(TokenType.WhileKeword);
             Match(TokenType.LeftParens);
-            var expression = Expression();
+            var expr = Express();
             Match(TokenType.RightParens);
             var statement = CompoundStatement();
-            return new WhileStatement(expression, statement);
+            return new WhileStatement(expr, statement);
         }
 
-        private Expression Expression()
+        private Expression Express()
         {
             Term();
             while (this.lookAhead.TokenType == TokenType.Plus || this.lookAhead.TokenType == TokenType.Minus)
@@ -288,34 +237,30 @@ namespace LanguageCompiler.Parser
         }
 
         private void Identifier()
->>>>>>> Stashed changes
         {
             switch (this.lookAhead.TokenType)
             {
-                case TokenType.IntKeword:
-                    Match(TokenType.IntKeword);
+                case TokenType.IntConstant:
+                    Match(TokenType.IntConstant);
                     break;
-                case TokenType.StringConstant:
-                    Match(TokenType.StringKeword);
+                case TokenType.FloatConstant:
+                    Match(TokenType.FloatConstant);
                     break;
-                case TokenType.BoolKeword:
-                    Match(TokenType.BoolKeword);
+                default:
+                    Match(TokenType.Identifier);
                     break;
             }
         }
 
-<<<<<<< Updated upstream
-        private void VariableDecl()
-=======
         private Statement IfStatement()
         {
             Match(TokenType.IfKeword);
             Match(TokenType.LeftParens);
-            var logical = LogicalOrExpress();
+            var expr = LogicalOrExpress();
             Match(TokenType.RightParens);
-            var compound = CompoundStatement();
-            var elseStatement = ElseStatement();
-            return new IfStatement(logical, compound, elseStatement);
+            var compoundStatement = CompoundStatement();
+            var elseStatement= ElseStatement();
+            return new IfStatement(expr, compoundStatement, elseStatement);
         }
 
         private Statement ElseStatement()
@@ -327,64 +272,108 @@ namespace LanguageCompiler.Parser
             return null;
         }
 
-        public void Variables()
->>>>>>> Stashed changes
+        public Statement Variables()
+        {
+            if (this.lookAhead.TokenType == TokenType.VarKeword)
+            {
+                Match(TokenType.VarKeword);
+            }
+            else if (this.lookAhead.TokenType == TokenType.LetKeword)
+            {
+                Match(TokenType.LetKeword);
+            }
+            Identifier();
+            Match(TokenType.Colon);
+            VarType();
+            Match(TokenType.Equal);
+            Assignation();
+            Match(TokenType.SemiColon);
+        }
+
+        private void Assignation()
+        {
+            if (this.lookAhead.TokenType == TokenType.Identifier || this.lookAhead.TokenType == TokenType.IntConstant)
+            {
+                Identifier();
+                Assignation();
+            }
+            else if (this.lookAhead.TokenType == TokenType.OpenList)
+            {
+                Match(TokenType.OpenList);
+                Identifier();
+                AssignationPrime();
+                Match(TokenType.CloseList);
+            }
+        }
+
+        private void AssignationPrime()
+        {
+            if (this.lookAhead.TokenType == TokenType.Comma)
+            {
+                Match(TokenType.Comma);
+                Identifier();
+                AssignationPrime();
+            }
+        }
+
+        private void VarType()
         {
             switch (this.lookAhead.TokenType)
             {
-                case TokenType.VarKeword:
-                     Match(TokenType.VarKeword);
-                     break;
-                case TokenType.LetKeword:
-                     Match(TokenType.LetKeword);
-                     break;
-                case TokenType.ConstKeword:
-                     Match(TokenType.ConstKeword);
-                     break;
+                case TokenType.IntKeword:
+                    Match(TokenType.IntKeword);
+                    break;
+                case TokenType.BoolKeword:
+                    Match(TokenType.BoolKeword);
+                    break;
+                case TokenType.StringKeword:
+                    Match(TokenType.StringKeword);
+                    break;
+                case TokenType.VoidKeword:
+                    Match(TokenType.VoidKeword);
+                    break;
             }
         }
 
-        private void Stmts()
+        public void Function()
         {
-            if (this.lookAhead.TokenType==TokenType.Identifier)
-            {
-                Stmt();
-                Stmts();
-            }
-            
+            Match(TokenType.ConstKeword);
+            Identifier();
+            Match(TokenType.Equal);
+            Match(TokenType.LeftParens);
+            FunctionParams();
+            Match(TokenType.RightParens);
+            Match(TokenType.Colon);
+            VarType();
+            Match(TokenType.FuncAssig);
+            CompoundStatement();
         }
 
-        private void Stmt()
+        private void FunctionParams()
         {
-            Match(TokenType.Identifier);
-            switch(this.lookAhead.TokenType)
+            if (this.lookAhead.TokenType == TokenType.Identifier)
             {
-                case TokenType.IfKeword:
-                    IfStmt();
-                    return;
-                case TokenType.WhileKeword:
-                    WhileStmt();
-                    return;
-                case TokenType.ConsoleKeword:
-                    PrintStmt();
-                    return;
-                case TokenType.ForKeword:
-                    ForStmt();
-                    return;
-
+                Identifier();
+                Match(TokenType.Colon);
+                VarType();
+            }
+            else if (this.lookAhead.TokenType == TokenType.Comma)
+            {
+                Match(TokenType.Comma);
+                FunctionParams();
             }
         }
 
         private void Move()
         {
-            this.lookAhead=this.scanner.GetNextToken();
+            this.lookAhead = this.scanner.GetNextToken();
         }
 
         private void Match(TokenType tokenType)
         {
-            if(this.lookAhead.TokenType!=tokenType)
+            if (this.lookAhead.TokenType != tokenType)
             {
-                throw new ApplicationException($"Syntax error! Expected {tokenType} but found {this.lookAhead.TokenType}.");
+                throw new ApplicationException($"Syntax error! Expected {tokenType} but found {this.lookAhead.TokenType}, Line: {this.lookAhead.Line}, Column: {this.lookAhead.Column}.");
             }
             this.Move();
         }

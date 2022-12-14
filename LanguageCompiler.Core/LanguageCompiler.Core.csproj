@@ -7,4 +7,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\LanguagueCompiler.Lexer\LanguagueCompiler.Lexer.csproj" />
+  </ItemGroup>
+
 </Project>

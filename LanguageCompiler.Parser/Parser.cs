@@ -45,7 +45,7 @@ namespace LanguageCompiler.Parser
             Match(TokenType.OpenBrace);
             var stmt = Statements(id);
             Match(TokenType.CloseBrace);
-            return stmt;
+            return new CompoundStatement(stmt);
         }
 
         private Statement Statements(IdExpression id)
@@ -318,18 +318,20 @@ namespace LanguageCompiler.Parser
             if (this.lookAhead.TokenType == TokenType.Equal)
             {
                 Match(TokenType.Equal);
-                stmt = Assignation();
+                stmt = Assignation(null);
             }
             Match(TokenType.SemiColon);
             return new DeclarationStatement(expr, exprId, stmt);
         }
 
-        private  Assignation()
+        private Statement Assignation(IdExpression id)
         {
             if (this.lookAhead.TokenType == TokenType.Identifier || this.lookAhead.TokenType == TokenType.IntConstant)
             {
                 var expr = Identifier();
-                Assignation();
+                //Assignation();
+                return new AssignationStatement(id, expr);
+                
             }
             else if (this.lookAhead.TokenType == TokenType.OpenList)
             {
@@ -338,9 +340,10 @@ namespace LanguageCompiler.Parser
                 AssignationPrime();
                 Match(TokenType.CloseList);
             }
+            return null;
         }
 
-        private  AssignationPrime()
+        private Statement AssignationPrime()
         {
             if (this.lookAhead.TokenType == TokenType.Comma)
             {

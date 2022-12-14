@@ -30,7 +30,7 @@ namespace LanguageCompiler.Core
         }
 
         public override string GenerateCode() =>
-            $"while({this.Identifier.GenerateCode()}){{ {Environment.NewLine} {this.Statement.GenerateCode()} {Environment.NewLine}}}";
+            $"while({this.Identifier.GenerateCode()}){{ {Environment.NewLine} {this.CompoundStatement.GenerateCode()} {Environment.NewLine}}}";
 
         public override void Interpret()
         {

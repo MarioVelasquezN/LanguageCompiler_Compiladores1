@@ -12,11 +12,14 @@ namespace LanguageCompiler.Core
         public IdExpression Id { get; set; }
         public Expression Expression { get; set; }
 
-        public AssignationStatement(IdExpression id, Expression expression)
+        public Statement statement { get; set; }
+
+        public AssignationStatement(IdExpression id, Expression expression, Statement statement)
         {
             Id = id;
             Expression = expression;
             this.ValidateSemantic();
+            this.statement = statement;
         }
 
         public override void ValidateSemantic()

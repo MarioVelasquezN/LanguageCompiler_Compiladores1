@@ -329,28 +329,31 @@ namespace LanguageCompiler.Parser
             if (this.lookAhead.TokenType == TokenType.Identifier || this.lookAhead.TokenType == TokenType.IntConstant)
             {
                 var expr = Identifier();
-                //Assignation();
-                return new AssignationStatement(id, expr);
+                var stmt = Assignation(id);
+                return new AssignationStatement(id, expr, stmt);
                 
             }
             else if (this.lookAhead.TokenType == TokenType.OpenList)
             {
                 Match(TokenType.OpenList);
-                Identifier();
-                AssignationPrime();
+                var expr = Identifier();
+                var stmt = AssignationPrime(id);
                 Match(TokenType.CloseList);
+                return new AssignationStatement(id, expr, stmt);
             }
             return null;
         }
 
-        private Statement AssignationPrime()
+        private Statement AssignationPrime(IdExpression id)
         {
             if (this.lookAhead.TokenType == TokenType.Comma)
             {
                 Match(TokenType.Comma);
-                Identifier();
-                AssignationPrime();
+                var expr = Identifier();
+                var stmt = AssignationPrime(id);
+                return new AssignationStatement(id, expr, stmt);
             }
+            return null;
         }
 
         private ExpressionType VarType()
@@ -392,17 +395,23 @@ namespace LanguageCompiler.Parser
 
         private List<Expression> FunctionParams()
         {
-            if (this.lookAhead.TokenType == TokenType.Identifier)
-            {
-                Identifier();
-                Match(TokenType.Colon);
-                VarType();
-            }
-            else if (this.lookAhead.TokenType == TokenType.Comma)
+            var expressions = new List<Expression>();
+            expressions.Add(LogicalOrExpress());
+            expressions.AddRange(ParamsPrime());
+            return expressions;
+        }
+
+        private List<Expression> ParamsPrime()
+        {
+            var expressions = new List<Expression>();
+            if (this.lookAhead.TokenType == TokenType.Comma)
             {
                 Match(TokenType.Comma);
-                FunctionParams();
+                expressions.Add(LogicalOrExpress());
+                expressions.AddRange(ParamsPrime());
             }
+
+            return expressions;
         }
 
         private void Move()

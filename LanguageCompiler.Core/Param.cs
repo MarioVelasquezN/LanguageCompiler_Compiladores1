@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace LanguageCompiler.Core
 {
-    public class Param
+    public class Param : Expression
     {
         public Expression Expression { get; set; }
         public ExpressionType Type { get; set; }
@@ -16,5 +16,16 @@ namespace LanguageCompiler.Core
             Expression = expression;
             Type = type;
         }
+
+        public override ExpressionType GetType()
+        {
+            return Type;
+        }
+
+        public override string GenerateCode() =>
+            this.Name;
+
+        public override dynamic Evaluate() =>
+            ContextManager.GetSymbolForInterpretation(this.Name).Value;
     }
 }

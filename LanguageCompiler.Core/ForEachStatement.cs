@@ -22,11 +22,7 @@ namespace LanguageCompiler.Core
 
         public override void ValidateSemantic()
         {
-            var exprType = this.Expression.GetType();
-            if (exprType != ExpressionType.Bool)
-            {
-                throw new ApplicationException($"Cannot implicitly convert '{exprType}' to bool");
-            }
+            
         }
 
         public override string GenerateCode() =>

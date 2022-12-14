@@ -1,4 +1,6 @@
-﻿using LanguagueCompiler.Lexer;
+﻿//using LanguageCompiler.Parser;
+using LanguagueCompiler.Lexer;
+
 
 var code = File.ReadAllText("Code.txt").Replace(Environment.NewLine,"\n");
 var input = new Input(code);
@@ -11,3 +13,8 @@ while (token.TokenType != TokenType.EOF)
     token =scanner.GetNextToken();
 }
 
+/*var parser = new Parser(scanner);
+
+var ast = parser.Parse();
+ast.ValidateSemantic();
+ast.Interpret();*/

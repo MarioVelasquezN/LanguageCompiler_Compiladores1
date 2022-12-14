@@ -55,6 +55,10 @@ namespace LanguageCompiler.Parser
 
         public Statement Statement(IdExpression id)
         {
+            if (id != null)
+            {
+                id.Type = ContextManager.Get(id.Name).Id.Type;
+            }
             switch (this.lookAhead.TokenType)
             {
                 case TokenType.VarKeword:
@@ -355,23 +359,23 @@ namespace LanguageCompiler.Parser
             return null;
         }
 
-        public void Function()
+        public Statement Function()
         {
             Match(TokenType.ConstKeword);
-            Identifier();
+            var expr = Identifier();
             Match(TokenType.Equal);
             Match(TokenType.LeftParens);
-            FunctionParams();
+            var @params = FunctionParams();
             Match(TokenType.RightParens);
             Match(TokenType.Colon);
-            VarType();
+            var type = VarType();
             Match(TokenType.FuncAssig);
-            CompoundStatement(null);
+            var stmt = CompoundStatement(null);
+            return new FunctionStatement(expr, @params, type, stmt);
         }
 
         private List<Expression> FunctionParams()
         {
-            var expressions = new List<Expression>();
             if (this.lookAhead.TokenType == TokenType.Identifier)
             {
                 Identifier();

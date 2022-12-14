@@ -24,9 +24,11 @@ namespace LanguageCompiler.Parser
         {
             if (this.lookAhead.TokenType == TokenType.ConstKeword || this.lookAhead.TokenType == TokenType.VarKeword || this.lookAhead.TokenType == TokenType.LetKeword)
             {
-                Element();
-                Program();
+                var current = Element(null);
+                var next = Program();
+                return new SequenceStatement(current, next);
             }
+            return null;
         }
 
         private Statement Element(IdExpression id)
@@ -69,24 +71,19 @@ namespace LanguageCompiler.Parser
                     return WhileStatement();
                 case TokenType.ConsoleKeword:
                     return PrintStatement();
-                    break;
                 case TokenType.ForKeword:
                     return ForStatement();
-                    break;
                 case TokenType.ForeachKeword:
                     return ForeachStatement();
-                    break;
                 // no se si lo de comentarios viene aca
                 case TokenType.ReturnKeword:
                     return ReturnStatement();
-                    break;
                 case TokenType.ContinueKeword:
                     return ContinueStatement();
-                    break;
                 case TokenType.BreakKeword:
                     return BreakStatement();
-                    break;
             }
+            return null;
         }
 
         private Statement BreakStatement()
@@ -145,7 +142,7 @@ namespace LanguageCompiler.Parser
             return new ForStatement(vars, expr1, expr2, statement);
         }
 
-        private void PrintStatement()
+        private Statement PrintStatement()
         {
             Match(TokenType.ConsoleKeword);
             Match(TokenType.Decimal);
@@ -153,7 +150,7 @@ namespace LanguageCompiler.Parser
             Match(TokenType.LeftParens);
             var @params = FunctionParams();
             Match(TokenType.RightParens);
-            return new PrintStatement(@params)
+            return new PrintStatement(@params);
         }
 
         private Expression LogicalOrExpress()
@@ -263,9 +260,9 @@ namespace LanguageCompiler.Parser
                     {
                         return id;
                     }
-                    Match(TokenType.LeftBracket);
+                    Match(TokenType.OpenList);
                     var index = LogicalOrExpress();
-                    Match(TokenType.RightBracket);
+                    Match(TokenType.CloseList);
                     return new ArrayAccessExpression(((ArrayType)id.GetType()).Of, id, index);
             }
 
@@ -302,12 +299,13 @@ namespace LanguageCompiler.Parser
             {
                 Match(TokenType.LetKeword);
             }
-            Identifier();
+            var expr = Identifier();
             Match(TokenType.Colon);
-            VarType();
+            var exprId = VarType();
             Match(TokenType.Equal);
-            Assignation();
+            var stmt = Assignation(null);
             Match(TokenType.SemiColon);
+            return new DeclarationStatement(expr, exprId, stmt);
         }
 
         private Statement Assignation(IdExpression id)
@@ -326,7 +324,7 @@ namespace LanguageCompiler.Parser
             }
         }
 
-        private void AssignationPrime()
+        private Statement AssignationPrime()
         {
             if (this.lookAhead.TokenType == TokenType.Comma)
             {
@@ -368,11 +366,12 @@ namespace LanguageCompiler.Parser
             Match(TokenType.Colon);
             VarType();
             Match(TokenType.FuncAssig);
-            CompoundStatement();
+            CompoundStatement(null);
         }
 
-        private void FunctionParams()
+        private List<Expression> FunctionParams()
         {
+            var expressions = new List<Expression>();
             if (this.lookAhead.TokenType == TokenType.Identifier)
             {
                 Identifier();

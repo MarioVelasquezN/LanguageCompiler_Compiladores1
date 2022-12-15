@@ -369,17 +369,19 @@ namespace LanguageCompiler.Parser
         public Statement Function()
         {
             Match(TokenType.FunctionKeyword);
-            Identifier();
+            var expr = Identifier();
             //Match(TokenType.Equal);
             Match(TokenType.LeftParens);
-            FunctionParams();
+            var param@ = FunctionParams();
             Match(TokenType.RightParens);
             Match(TokenType.Colon);
-            VarType();
-            CompoundStatement();
+            var type = VarType();
+            var stmts =CompoundStatement();
+            return new FunctionStatement(expr,param, type, stmts);
+
         }
 
-        private void FunctionParams()
+        private List<Expression> FunctionParams()
         {
             if (this.lookAhead.TokenType == TokenType.Identifier)
             {

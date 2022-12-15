@@ -36,7 +36,8 @@ namespace LanguageCompiler.Parser
 
         private Statement Element()
         {
-            return Statement();
+            IdExpression id = null;
+            return Statement(id);
         }
 
         private Statement CompoundStatement()
@@ -49,26 +50,27 @@ namespace LanguageCompiler.Parser
 
         private Statement Statements()
         {
+            IdExpression id= null;
             if (this.lookAhead.TokenType == TokenType.VarKeword || this.lookAhead.TokenType == TokenType.LetKeword || this.lookAhead.TokenType == TokenType.ConstKeword
                 || this.lookAhead.TokenType == TokenType.IfKeword || this.lookAhead.TokenType == TokenType.WhileKeword || this.lookAhead.TokenType == TokenType.ConsoleKeword
                 || this.lookAhead.TokenType == TokenType.ForKeword || this.lookAhead.TokenType == TokenType.ForeachKeword || this.lookAhead.TokenType == TokenType.ReturnKeword
                 || this.lookAhead.TokenType == TokenType.ContinueKeword || this.lookAhead.TokenType == TokenType.BreakKeword)
             {
 
-                return new SequenceStatement(Statement(), Statements());
+                return new SequenceStatement(Statement(id), Statements());
             }
             return null;
         }
 
-        public Statement Statement()
+        public Statement Statement(IdExpression id)
         {
-
+            ContextManager.Push();
             switch (this.lookAhead.TokenType)
             {
                 case TokenType.VarKeword:
-                    return Variables();
+                    return Variables(id);
                 case TokenType.LetKeword:
-                    return Variables();
+                    return Variables(id);
                 case TokenType.FunctionKeyword:
                     return Function();
                 case TokenType.IfKeword:
@@ -88,6 +90,7 @@ namespace LanguageCompiler.Parser
                 case TokenType.BreakKeword:
                     return BreakStatement();
             }
+            ContextManager.Pop();
             return null;
         }
 
@@ -137,9 +140,10 @@ namespace LanguageCompiler.Parser
 
         private Statement ForStatement()
         {
+            IdExpression id = null;
             Match(TokenType.ForKeword);
             Match(TokenType.LeftParens);
-            var stmt = Variables();
+            var stmt = Variables(id);
             var expr1 = LogicalOrExpresion();
             Match(TokenType.SemiColon);
             var expr2 = LogicalOrExpresion();
@@ -293,7 +297,7 @@ namespace LanguageCompiler.Parser
             return null;
         }
 
-        public Statement Variables()
+        public Statement Variables(IdExpression id)
         {
             if (this.lookAhead.TokenType == TokenType.VarKeword)
             {
@@ -312,6 +316,7 @@ namespace LanguageCompiler.Parser
                 return new DeclarationStatement(expr,type,Assignation());
             }
             Match(TokenType.SemiColon);
+            ContextManager.Put(this.lookAhead.Lexeme, id);
             return null;
         }
 

@@ -85,13 +85,8 @@ namespace LanguageCompiler.Parser
                     ForStatement();
                     break;
                 case TokenType.ForeachKeword:
-<<<<<<< HEAD
                     ForeachStatement();
                     break;
-                // no se si lo de comentarios viene aca
-=======
-                    return ForeachStatement();
->>>>>>> 7b273f4fde661d5f732bb49b9a60327373e417a9
                 case TokenType.ReturnKeword:
                     ReturnStatement();
                     break;

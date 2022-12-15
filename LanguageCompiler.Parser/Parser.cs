@@ -51,7 +51,7 @@ namespace LanguageCompiler.Parser
         private Statement Statements(IdExpression id)
         {
             //Console.WriteLine("Statements encuentra" + this.lookAhead.TokenType.ToString());
-            if (this.lookAhead.TokenType == TokenType.VarKeword || this.lookAhead.TokenType == TokenType.LetKeword || this.lookAhead.TokenType == TokenType.ConstKeword
+            if (this.lookAhead.TokenType == TokenType.VarKeword || this.lookAhead.TokenType == TokenType.LetKeword || this.lookAhead.TokenType == TokenType.FunctionKeyword
                 || this.lookAhead.TokenType == TokenType.IfKeword || this.lookAhead.TokenType == TokenType.WhileKeword || this.lookAhead.TokenType == TokenType.ConsoleKeword
                 || this.lookAhead.TokenType == TokenType.ForKeword || this.lookAhead.TokenType == TokenType.ForeachKeword || this.lookAhead.TokenType == TokenType.ReturnKeword
                 || this.lookAhead.TokenType == TokenType.ContinueKeword || this.lookAhead.TokenType == TokenType.BreakKeword)
@@ -71,7 +71,7 @@ namespace LanguageCompiler.Parser
                     return Variables();
                 case TokenType.LetKeword:
                     return Variables();
-                case TokenType.ConstKeword:
+                case TokenType.FunctionKeyword:
                     return Function();
                 case TokenType.IfKeword:
                     return IfStatement();

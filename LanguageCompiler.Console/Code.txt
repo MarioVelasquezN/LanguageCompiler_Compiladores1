@@ -1,1 +1,1 @@
-﻿function sum () : void { }
+﻿function sum () : number { }

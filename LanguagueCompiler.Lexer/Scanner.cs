@@ -147,7 +147,7 @@ namespace LanguagueCompiler.Lexer
                     {
                         case '/':
                             {
-                                if (PeekNextChar() != '*')
+                                if (PeekNextChar() != '*' || PeekNextChar() != '/')
                                 {
                                     lexeme.Append(currentChar);
                                     return new Token

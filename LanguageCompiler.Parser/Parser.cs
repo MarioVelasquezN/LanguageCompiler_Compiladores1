@@ -83,7 +83,6 @@ namespace LanguageCompiler.Parser
                     return ForStatement();
                 case TokenType.ForeachKeword:
                     return ForeachStatement();
-                case TokenType.
                 case TokenType.ReturnKeword:
                     return ReturnStatement();
                 case TokenType.ContinueKeword:

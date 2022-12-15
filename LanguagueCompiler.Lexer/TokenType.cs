@@ -19,6 +19,7 @@ namespace LanguagueCompiler.Lexer
         LessOrEqualThan,
         GreaterOrEqualThan,
         Id,
+        FunctionKeyword,
         IfKeword,
         ElseKeword,
         WhileKeword,

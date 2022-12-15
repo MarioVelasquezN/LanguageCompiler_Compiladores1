@@ -14,6 +14,7 @@ namespace LanguagueCompiler.Lexer
             this.keywords = new Dictionary<string, TokenType>
             {
                 {"if",TokenType.IfKeword },
+                {"function",TokenType.FunctionKeyword },
                 {"else",TokenType.ElseKeword },
                 {"while",TokenType.WhileKeword },
                 {"for",TokenType.ForKeword },
@@ -146,7 +147,7 @@ namespace LanguagueCompiler.Lexer
                     {
                         case '/':
                             {
-                                if (PeekNextChar() != '*')
+                                if (PeekNextChar() != '*' || PeekNextChar() != '/')
                                 {
                                     lexeme.Append(currentChar);
                                     return new Token

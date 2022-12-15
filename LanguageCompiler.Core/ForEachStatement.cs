@@ -8,11 +8,12 @@ namespace LanguageCompiler.Core
 {
     public class ForEachStatement : Statement
     {
-        public ForEachStatement(Expression expression1, Expression expression2, Statement statement)
+        public ForEachStatement( Expression expression1, Expression expression2, Statement statement)
         {
             Expression1 = expression1;
             Expression2 = expression2;
             Statement = statement;
+            this.ValidateSemantic();
         }
 
         public Expression Expression1 { get; set; }

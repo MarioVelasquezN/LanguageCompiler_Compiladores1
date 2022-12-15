@@ -9,13 +9,13 @@ namespace LanguageCompiler.Core
     public class FunctionStatement : Statement
     {
         public Expression Identifier    { get; set; }
-        public List<Expression> Params { get; set; }
+        public string Params { get; set; }
 
         public ExpressionType Type { get; set; }
 
         public Statement CompoundStatement { get; set; }
 
-        public FunctionStatement(Expression identifier, List<Expression> @params, ExpressionType type, Statement compoundStatement)
+        public FunctionStatement(Expression identifier,string @params, ExpressionType type, Statement compoundStatement)
         {
             Identifier = identifier;
             Params = @params;

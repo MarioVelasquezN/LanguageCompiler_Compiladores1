@@ -341,23 +341,24 @@ namespace LanguageCompiler.Parser
             }
         }
 
-        private void VarType()
+        private ExpressionType VarType()
         {
             switch (this.lookAhead.TokenType)
             {
                 case TokenType.IntKeword:
                     Match(TokenType.IntKeword);
-                    break;
+                    return ExpressionType.Int;
                 case TokenType.BoolKeword:
                     Match(TokenType.BoolKeword);
-                    break;
+                    return ExpressionType.Bool;
                 case TokenType.StringKeword:
                     Match(TokenType.StringKeword);
-                    break;
+                    return ExpressionType.String;
                 case TokenType.VoidKeword:
                     Match(TokenType.VoidKeword);
-                    break;
+                    return ExpressionType.Void;
             }
+            return null;
         }
 
         public Statement Function()
@@ -397,7 +398,7 @@ namespace LanguageCompiler.Parser
 
         private void Match(TokenType tokenType)
         {
-            Console.WriteLine("Match encuentra " + this.lookAhead.TokenType.ToString());
+            Console.WriteLine("Match encuentra: " + this.lookAhead.TokenType.ToString());
             if (this.lookAhead.TokenType != tokenType)
             {
                 throw new ApplicationException($"Syntax error! Expected {tokenType} but found {this.lookAhead.TokenType}, Line: {this.lookAhead.Line}, Column: {this.lookAhead.Column}.");

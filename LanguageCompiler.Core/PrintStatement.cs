@@ -8,11 +8,11 @@ namespace LanguageCompiler.Core
 {
     public class PrintStatement : Statement
     {
-        public List<Expression> Expressions { get; set; }
+        public Expression Expression { get; set; }
 
-        public PrintStatement(List<Expression> expressions)
+        public PrintStatement(Expression expression)
         {
-            Expressions = expressions;
+            Expression = expression;
             this.ValidateSemantic();
         }
 
@@ -25,15 +25,14 @@ namespace LanguageCompiler.Core
         }
 
         public override string GenerateCode() =>
-            $"cout<<{string.Join("<<", this.Expressions.Select(x => x.GenerateCode()))}<<endl;";
+            $"cout<<{string.Join("<<", this.Expression.GenerateCode())}<<endl;";
 
         public override void Interpret()
         {
-            foreach (var expr in Expressions)
-            {
-                var exprValue = expr.Evaluate();
+            
+                var exprValue = Expression.Evaluate();
                 Console.Write(exprValue);
-            }
+            
         }
     }
 }

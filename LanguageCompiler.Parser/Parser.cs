@@ -1,5 +1,5 @@
-﻿using LanguageCompiler.Core;
-using LanguagueCompiler.Lexer;
+﻿using LanguagueCompiler.Lexer;
+using LanguageCompiler.Core;
 using Microsoft.VisualBasic;
 using System.Text.RegularExpressions;
 

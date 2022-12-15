@@ -380,7 +380,7 @@ namespace LanguageCompiler.Parser
 
         public Statement Function()
         {
-            Match(TokenType.ConstKeword);
+            Match(TokenType.FunctionKeyword);
             var expr = Identifier();
             Match(TokenType.Equal);
             Match(TokenType.LeftParens);

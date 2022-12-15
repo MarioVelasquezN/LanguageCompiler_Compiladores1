@@ -343,7 +343,7 @@ namespace LanguageCompiler.Parser
 
             Match(TokenType.FunctionKeyword);
             Identifier();
-            Match(TokenType.Equal);
+            //Match(TokenType.Equal);
             Match(TokenType.LeftParens);
             FunctionParams();
             Match(TokenType.RightParens);

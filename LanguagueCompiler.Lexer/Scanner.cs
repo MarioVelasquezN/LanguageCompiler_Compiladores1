@@ -14,7 +14,7 @@ namespace LanguagueCompiler.Lexer
             this.keywords = new Dictionary<string, TokenType>
             {
                 {"if",TokenType.IfKeword },
-                {"function",TokenType.IfKeword  },
+                {"function",TokenType.FunctionKeyword },
                 {"else",TokenType.ElseKeword },
                 {"while",TokenType.WhileKeword },
                 {"for",TokenType.ForKeword },

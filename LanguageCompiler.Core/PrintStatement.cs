@@ -25,7 +25,9 @@ namespace LanguageCompiler.Core
         }
 
         public override string GenerateCode() =>
-            $"cout<<{string.Join("<<", this.Expression.GenerateCode())}<<endl;";
+            $"console.log({this.Expression.GenerateCode()});";
+
+
 
         public override void Interpret()
         {

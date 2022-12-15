@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -8,14 +9,13 @@ namespace LanguageCompiler.Core
 {
     public class ForEachStatement : Statement
     {
-        public ForEachStatement( Expression expression1, Expression expression2, Statement statement)
+        public ForEachStatement(Expression expression1, Expression expression2, Statement statement)
         {
             Expression1 = expression1;
             Expression2 = expression2;
             Statement = statement;
             this.ValidateSemantic();
         }
-
         public Expression Expression1 { get; set; }
         public Expression Expression2 { get; set; }
         public Statement Statement { get; set; }
@@ -26,7 +26,8 @@ namespace LanguageCompiler.Core
         }
 
         public override string GenerateCode() =>
-            $"while({this.Expression1.GenerateCode()}){{ {Environment.NewLine} }}";
+             $"{this.Expression1.GenerateCode()}.foreach({this.Statement.GenerateCode()}({this.Expression2.GenerateCode()}));{{ {Environment.NewLine} }}";
+
 
         public override void Interpret()
         {

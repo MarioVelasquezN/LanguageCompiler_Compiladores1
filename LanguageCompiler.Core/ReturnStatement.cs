@@ -25,7 +25,7 @@ namespace LanguageCompiler.Core
         }
 
         public override string GenerateCode() =>
-            $"while({this.Expression.GenerateCode()}){{ {Environment.NewLine} }}";
+            $"return {this.Expression.GenerateCode()};{{ {Environment.NewLine} }}";
 
         public override void Interpret()
         {

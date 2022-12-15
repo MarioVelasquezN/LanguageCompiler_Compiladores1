@@ -10,8 +10,8 @@ namespace LanguageCompiler.Core
     {
         public override void ValidateSemantic() { }
 
-        public override string GenerateCode() { return null; }
-            
+        public override string GenerateCode() { return $"break;"; }
+
 
         public override void Interpret()      {
 

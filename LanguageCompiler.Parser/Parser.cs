@@ -24,7 +24,6 @@ namespace LanguageCompiler.Parser
 
         private Statement Program()
         {
-            //Console.WriteLine("Program encuentra" + this.lookAhead.TokenType.ToString());
             //if (this.lookAhead.TokenType == TokenType.ConstKeword || this.lookAhead.TokenType == TokenType.VarKeword || this.lookAhead.TokenType == TokenType.LetKeword)
             if (Enum.IsDefined(typeof(TokenType), this.lookAhead.TokenType.ToString()) == true && this.lookAhead.TokenType != TokenType.EOF)
             {
@@ -48,7 +47,7 @@ namespace LanguageCompiler.Parser
             return new CompoundStatement(stmts);
         }
 
-        private Statement Statements(IdExpression id)
+        private Statement Statements()
         {
             if (this.lookAhead.TokenType == TokenType.VarKeword || this.lookAhead.TokenType == TokenType.LetKeword || this.lookAhead.TokenType == TokenType.ConstKeword
                 || this.lookAhead.TokenType == TokenType.IfKeword || this.lookAhead.TokenType == TokenType.WhileKeword || this.lookAhead.TokenType == TokenType.ConsoleKeword
@@ -56,12 +55,12 @@ namespace LanguageCompiler.Parser
                 || this.lookAhead.TokenType == TokenType.ContinueKeword || this.lookAhead.TokenType == TokenType.BreakKeword)
             {
 
-                return new SequenceStatement(Statement(id), Statements(id));
+                return new SequenceStatement(Statement(), Statements());
             }
             return null;
         }
 
-        public Statement Statement(IdExpression id)
+        public Statement Statement()
         {
 
             switch (this.lookAhead.TokenType)
@@ -304,41 +303,47 @@ namespace LanguageCompiler.Parser
             {
                 Match(TokenType.LetKeword);
             }
-            Identifier();
+            var expr = Identifier();
             Match(TokenType.Colon);
-            VarType();
+            var type = VarType();
             if (this.lookAhead.TokenType == TokenType.Equal)
             {
                 Match(TokenType.Equal);
-                Assignation();
+                return new DeclarationStatement(expr,type,Assignation());
             }
             Match(TokenType.SemiColon);
+            return null;
         }
 
-        private void Assignation()
+        private Statement Assignation()
         {
             if (this.lookAhead.TokenType == TokenType.Identifier || this.lookAhead.TokenType == TokenType.IntConstant)
             {
-                Identifier();
-                Assignation();
+                var expr = Identifier();
+                var stmt = Assignation();
+                return new AssignationStatement(expr, stmt);
             }
             else if (this.lookAhead.TokenType == TokenType.OpenList)
             {
                 Match(TokenType.OpenList);
-                Identifier();
-                AssignationPrime();
+                var expr = Identifier();
+                var stmt = AssignationPrime();
                 Match(TokenType.CloseList);
+                return new AssignationStatement(expr, stmt);
             }
+            return null;
         }
 
-        private void AssignationPrime()
+        private Statement AssignationPrime()
         {
             if (this.lookAhead.TokenType == TokenType.Comma)
             {
                 Match(TokenType.Comma);
-                Identifier();
-                AssignationPrime();
+                var expr = Identifier();
+                var stmt =AssignationPrime();
+                return new AssignationStatement(expr, stmt);
             }
+            return null;
         }
 
         private ExpressionType VarType()
@@ -363,7 +368,6 @@ namespace LanguageCompiler.Parser
 
         public Statement Function()
         {
-
             Match(TokenType.FunctionKeyword);
             Identifier();
             //Match(TokenType.Equal);

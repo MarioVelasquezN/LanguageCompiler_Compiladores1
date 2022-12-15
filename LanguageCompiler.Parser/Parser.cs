@@ -48,7 +48,7 @@ namespace LanguageCompiler.Parser
             return new CompoundStatement(stmts);
         }
 
-        private Statement Statements()
+        private Statement Statements(IdExpression id)
         {
             if (this.lookAhead.TokenType == TokenType.VarKeword || this.lookAhead.TokenType == TokenType.LetKeword || this.lookAhead.TokenType == TokenType.ConstKeword
                 || this.lookAhead.TokenType == TokenType.IfKeword || this.lookAhead.TokenType == TokenType.WhileKeword || this.lookAhead.TokenType == TokenType.ConsoleKeword
@@ -56,12 +56,12 @@ namespace LanguageCompiler.Parser
                 || this.lookAhead.TokenType == TokenType.ContinueKeword || this.lookAhead.TokenType == TokenType.BreakKeword)
             {
 
-                return new SequenceStatement(Statement(), Statements());
+                return new SequenceStatement(Statement(id), Statements(id));
             }
             return null;
         }
 
-        public Statement Statement()
+        public Statement Statement(IdExpression id)
         {
 
             switch (this.lookAhead.TokenType)

@@ -23,7 +23,7 @@ namespace LanguageCompiler.Core
         public override void ValidateSemantic()
         {
             
-            
+                
         }
 
         public override string GenerateCode() =>

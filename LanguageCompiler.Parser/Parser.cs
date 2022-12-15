@@ -372,7 +372,8 @@ namespace LanguageCompiler.Parser
             var expr = Identifier();
             //Match(TokenType.Equal);
             Match(TokenType.LeftParens);
-            var param@ = FunctionParams();
+            var param = "";
+            param = FunctionParams(param);
             Match(TokenType.RightParens);
             Match(TokenType.Colon);
             var type = VarType();
@@ -381,20 +382,23 @@ namespace LanguageCompiler.Parser
 
         }
 
-        private List<Expression> FunctionParams()
+        private string FunctionParams(string appending)
         {
             if (this.lookAhead.TokenType == TokenType.Identifier)
             {
-                Identifier();
+                var iden = Identifier();
                 Match(TokenType.Colon);
-                VarType();
-                FunctionParams();
+                var type = VarType();
+                appending = appending + iden + ":" + type;
+                FunctionParams(appending);
             }
             else if (this.lookAhead.TokenType == TokenType.Comma)
             {
                 Match(TokenType.Comma);
-                FunctionParams();
+                appending = appending + ",";
+                FunctionParams(appending);
             }
+            return appending;
         }
 
         private void Move()
